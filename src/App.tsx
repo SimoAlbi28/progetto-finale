@@ -25,8 +25,8 @@ export default function App() {
 
   const [page, setPage] = useState<'home' | 'folder'>('home')
   const [currentAnno, setCurrentAnno] = useState<string | null>(null)
-  const [yearInput, setYearInput] = useState('')
-  const [folderNameInput, setFolderNameInput] = useState('Manutenzioni')
+  const [yearInput, setYearInput] = useState('2026')
+  const [folderNameInput, setFolderNameInput] = useState('')
   const [searchInput, setSearchInput] = useState('')
   const [nomeInput, setNomeInput] = useState('')
   const [pendingQrId, setPendingQrId] = useState<string | null>(null)
@@ -87,17 +87,19 @@ export default function App() {
       return
     }
 
-    if (folders.hasOwnProperty(anno)) {
-      alert('Esiste già una cartella con questo anno.')
+    // Controlla se esiste già una cartella con lo stesso nome e anno
+    if (Object.values(folders).some((f) => f.nome === nome && f.anno === anno)) {
+      alert('Esiste già una cartella con questo nome e anno.')
       return
     }
 
+    const id = Date.now().toString()
     setFolders((prev) => ({
       ...prev,
-      [anno]: { nome, anno, manutenzioni: {} },
+      [id]: { nome, anno, manutenzioni: {} },
     }))
-    setYearInput('')
-    setFolderNameInput('Manutenzioni')
+    setYearInput('2026')
+    setFolderNameInput('')
     setShowYearModal(false)
   }
 
@@ -112,10 +114,10 @@ export default function App() {
 
     if (
       Object.entries(folders).some(
-        ([key, f]) => f.nome === nuovoNome && key !== anno,
+        ([key, f]) => f.nome === nuovoNome && f.anno === folders[anno].anno && key !== anno,
       )
     ) {
-      alert('Nome già esistente.')
+      alert('Nome già esistente per questo anno.')
       return
     }
 
